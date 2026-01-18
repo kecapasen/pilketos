@@ -50,8 +50,15 @@ class CandidateController extends BaseController
             return redirect()->to('/admin/candidate/create')->withInput();
         }
         $fileImage = $this->request->getFile('image');
+        if (! $fileImage->isValid() || $fileImage->hasMoved()) {
+            return redirect()->to('/admin/candidate/create')->withInput();
+        }
         $imageName = $fileImage->getRandomName();
-        $fileImage->move('uploads/candidates', $imageName);
+        $uploadDir = FCPATH . 'uploads/candidates';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0775, true);
+        }
+        $fileImage->move($uploadDir, $imageName);
         $data = [
             'order_number'        => $this->request->getVar('order_number'),
             'chairman_name'       => $this->request->getVar('chairman_name'),
@@ -94,13 +101,21 @@ class CandidateController extends BaseController
             return redirect()->to('/admin/candidates');
         }
         $fileImage = $this->request->getFile('image');
+        $uploadDir = FCPATH . 'uploads/candidates';
         if ($fileImage->getError() == 4) {
             $imageName = $this->request->getVar('old_image');
         } else {
+            if (! $fileImage->isValid() || $fileImage->hasMoved()) {
+                return redirect()->back()->withInput();
+            }
             $imageName = $fileImage->getRandomName();
-            $fileImage->move('uploads/candidates', $imageName);
-            if ($candidateOld->image != 'default.jpg' && file_exists('uploads/candidates/' . $candidateOld->image)) {
-                unlink('uploads/candidates/' . $candidateOld->image);
+            if (!is_dir($uploadDir)) {
+                mkdir($uploadDir, 0775, true);
+            }
+            $fileImage->move($uploadDir, $imageName);
+            $oldPath = $uploadDir . '/' . $candidateOld->image;
+            if ($candidateOld->image !== 'default.jpg' && is_file($oldPath)) {
+                unlink($oldPath);
             }
         }
         $data = [
