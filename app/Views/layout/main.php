@@ -55,7 +55,11 @@
         <?= $this->renderSection('content') ?>
     </main>
     <footer class="bg-primary text-white text-center py-3 sm:py-4 mt-auto px-4">
-        <p class="text-xs sm:text-sm">© <?= date('Y') ?> OSIS Smansa. Built with ❤️ & CodeIgniter 4.</p>
+        <p class="text-xs sm:text-sm">
+            © <?= date('Y') ?> 
+            Built by <a href="https://instagram.com/rizkymfrz" target="_blank" class="underline hover:text-accent transition-colors">@rizkymfrz</a> · 
+            Design by <a href="https://instagram.com/annfarta" target="_blank" class="underline hover:text-accent transition-colors">@annfarta</a>
+        </p>
     </footer>
 </body>
 </html>
